@@ -9,7 +9,7 @@
 		#=================END SLA REMARK SECTION===============================
 
 
-1. Modify your existing DynamicList / TicketList Statistic to include 'FirstResponseStatus' and 'SolutionStatus' field.  
+1. Modify your existing DynamicList / TicketList Statistic to include **FirstResponseStatus** and **SolutionStatus** field.  
   
 [![download.png](https://i.postimg.cc/tJ23pvJN/download.png)](https://postimg.cc/2LLbxw41)  
   
