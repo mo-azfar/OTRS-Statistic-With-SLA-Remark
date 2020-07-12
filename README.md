@@ -15,4 +15,4 @@
   
 [![download.png](https://i.postimg.cc/tJ23pvJN/download.png)](https://postimg.cc/2LLbxw41)  
   
-[![download1.png](https://i.postimg.cc/tC4d2bvS/download1.png)](https://postimg.cc/rz7twBkx)  
+[![Capture.png](https://i.postimg.cc/br8y1XqR/Capture.png)](https://postimg.cc/FdWXQBdf)  

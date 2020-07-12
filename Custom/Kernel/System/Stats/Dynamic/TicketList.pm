@@ -1332,30 +1332,23 @@ sub GetStatTable {
         $Ticket{NumberOfArticles}            ||= 0;
 
         #=================BEGIN SLA REMARK SECTION===============================
-        if ( $Ticket{EscalationTime} eq 0 ) 
+        #First Response logic
+        if (defined $Ticket{FirstResponseTime} || $Ticket{FirstResponseDiffInMin} ne 0 || $Ticket{FirstResponseTimeEscalation} ne 0 )
         {
-            $Ticket{FirstResponseStatus}="N/A";
-            $Ticket{SolutionStatus}="N/A";
-        }
-        else
-        {
-            #First Response logic
-            #If agent didnt yet response and current time is still below sla resposne time
-            if( $Ticket{'FirstResponseDiffInMin'} eq 0 && $Ticket{'FirstResponseTimeEscalation'} eq 0)
+            if( $Ticket{'FirstResponseDiffInMin'} eq 0 )  #If agent didnt yet response 
             {
-                $Ticket{FirstResponseStatus}="Within";
+                if ( $Ticket{'FirstResponseTimeEscalation'} eq 0 ) #current time is still below sla response time
+                {
+                    $Ticket{FirstResponseStatus}="Within";
+                }
+                else #current time is over sla response time
+                {
+                    $Ticket{FirstResponseStatus}="Breach";
+                }
             }
-            
-            #If agent didnt yet response and current time is over sla resposne time
-            if( $Ticket{'FirstResponseDiffInMin'} eq 0 && $Ticket{'FirstResponseTimeEscalation'} ne 0)
+            else #If agent already response
             {
-                $Ticket{FirstResponseStatus}="Breach";
-            }
-            
-            #If agent already response
-            if( $Ticket{'FirstResponseDiffInMin'} ne 0 && $Ticket{'FirstResponseTimeEscalation'} eq 0)
-            {
-                if ($Ticket{'FirstResponseDiffInMin'} < 0)
+                if ($Ticket{'FirstResponseDiffInMin'} =~/^\-/) #value negative
                 {
                     $Ticket{FirstResponseStatus}="Breach";
                 }
@@ -1364,24 +1357,29 @@ sub GetStatTable {
                     $Ticket{FirstResponseStatus}="Within";
                 }
             }
-            
-            #Solution logic
-            #If agent didnt yet solved the ticket and current time is still below sla solution time
-            if( $Ticket{'SolutionDiffInMin'} eq 0 && $Ticket{'SolutionTimeEscalation'} eq 0)
+        }
+        else
+        {
+            $Ticket{FirstResponseStatus}="N/A";
+        }
+        
+        #Solution logic
+        if ($Ticket{SolutionTime} ne "" || $Ticket{SolutionDiffInMin} ne 0 || $Ticket{SolutionTimeEscalation} ne 0 )
+        {
+            if( $Ticket{'SolutionDiffInMin'} eq 0 ) #If agent didnt yet solved the ticket 
             {
-                $Ticket{SolutionStatus}="Within";
+                if ( $Ticket{'SolutionTimeEscalation'} eq 0 ) #current time is still below sla solution time
+                {
+                    $Ticket{SolutionStatus}="Within";
+                }
+                else #current time over sla solution time
+                {
+                    $Ticket{SolutionStatus}="Breach";
+                }
             }
-            
-            #If agent didnt yet solved the ticket and current time is over sla solution time
-            if( $Ticket{'SolutionDiffInMin'} eq 0 && $Ticket{'SolutionTimeEscalation'} ne 0)
+            else #If agent already solve
             {
-                $Ticket{SolutionStatus}="Breach";
-            }
-            
-            #If agent already closed the ticket
-            if( $Ticket{'SolutionDiffInMin'} ne 0 && $Ticket{'SolutionTimeEscalation'} eq 0)
-            {
-                if ($Ticket{'SolutionDiffInMin'} < 0)
+                if( $Ticket{'SolutionDiffInMin'} =~/^\-/ ) #value negative
                 {
                     $Ticket{SolutionStatus}="Breach";
                 }
@@ -1389,7 +1387,12 @@ sub GetStatTable {
                 {
                     $Ticket{SolutionStatus}="Within";
                 }
+                
             }
+        }
+        else
+        {
+            $Ticket{SolutionStatus}="N/A";
         }
         #=================END SLA REMARK SECTION===============================
         
